@@ -49,7 +49,7 @@ namespace LocalizationSample
             //{
 
             //}));
-
+            
             app.UseRequestLocalization(options);
 
             app.Use(async (context, next) =>
@@ -155,6 +155,9 @@ $@"<!doctype html>
 
         public static void Main(string[] args)
         {
+            Console.WriteLine("Waiting for debugger");
+            Console.ReadLine();
+
             var config = new ConfigurationBuilder()
                 .AddCommandLine(args)
                 .Build();

@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Server.IntegrationTesting;
 using Microsoft.Extensions.Logging;
@@ -15,31 +16,35 @@ namespace Microsoft.AspNetCore.Localization.FunctionalTests
 {
     public class TestRunner
     {
+        private const string SolutionName = "Localization.sln";
         private string _applicationPath;
 
         public TestRunner(string applicationPath)
         {
-            _applicationPath = Path.Combine(ResolveRootFolder(PlatformServices.Default.Application.ApplicationBasePath), applicationPath);
+            _applicationPath = Path.Combine(
+                ResolveSolutionDirectory(PlatformServices.Default.Application.ApplicationBasePath), 
+                applicationPath,
+                Path.GetFileName(applicationPath) + ".csproj");
         }
 
-        private static string ResolveRootFolder(string projectFolder)
+        private static string ResolveSolutionDirectory(string projectFolder)
         {
-            var di = new DirectoryInfo(projectFolder);
+            var directory = new DirectoryInfo(projectFolder);
 
-            while (di.Parent != null)
+            while (directory.Parent != null)
             {
-                var globalJsonPath = Path.Combine(di.FullName, "global.json");
+                var solutionPath = Path.Combine(directory.FullName, SolutionName);
 
-                if (File.Exists(globalJsonPath))
+                if (File.Exists(solutionPath))
                 {
-                    return di.FullName;
+                    return directory.FullName;
                 }
 
-                di = di.Parent;
+                directory = directory.Parent;
             }
 
             // If we don't find any files then make the project folder the root
-            return projectFolder;
+            throw new Exception($"Unable to find solution {SolutionName} file given the project directory {projectFolder}.");
         }
 
         private async Task<string> RunTestAndGetResponse(
@@ -50,8 +55,8 @@ namespace Microsoft.AspNetCore.Localization.FunctionalTests
             string locale)
         {
             var logger = new LoggerFactory()
-                            .AddConsole()
-                            .CreateLogger(string.Format("Localization Test Site:{0}:{1}:{2}", ServerType.Kestrel, runtimeFlavor, runtimeArchitecture));
+                .AddConsole(LogLevel.Debug)
+                .CreateLogger(string.Format("Localization Test Site:{0}:{1}:{2}", ServerType.Kestrel, runtimeFlavor, runtimeArchitecture));
 
             using (logger.BeginScope("LocalizationTest"))
             {
@@ -59,7 +64,8 @@ namespace Microsoft.AspNetCore.Localization.FunctionalTests
                 {
                     ApplicationBaseUriHint = applicationBaseUrl,
                     EnvironmentName = environmentName,
-                    TargetFramework = runtimeFlavor == RuntimeFlavor.Clr ? "net451" : "netcoreapp1.1"
+                    TargetFramework = runtimeFlavor == RuntimeFlavor.Clr ? "net451" : "netcoreapp1.1",
+                    WorkingDirectory = Path.GetDirectoryName(_applicationPath),
                 };
 
                 using (var deployer = ApplicationDeployerFactory.Create(deploymentParameters, logger))
