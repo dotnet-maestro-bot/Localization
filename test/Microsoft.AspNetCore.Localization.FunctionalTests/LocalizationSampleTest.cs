@@ -5,42 +5,56 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Server.IntegrationTesting;
 using Microsoft.AspNetCore.Testing.xunit;
+using Microsoft.Extensions.Logging.Testing;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Localization.FunctionalTests
 {
-    public class LocalizationSampleTest
+    public class LocalizationSampleTest : LoggedTest
     {
         private static readonly string _applicationPath = Path.Combine("samples", "LocalizationSample");
+
+        public LocalizationSampleTest(ITestOutputHelper output) : base(output)
+        {
+        }
 
         [ConditionalFact]
         [OSSkipCondition(OperatingSystems.Linux)]
         [OSSkipCondition(OperatingSystems.MacOSX)]
-        public Task RunSite_WindowsOnly()
+        public async Task RunSite_WindowsOnlyAsync()
         {
-            var testRunner = new TestRunner(_applicationPath);
+            using (StartLog(out var loggerFactory))
+            {
+                var testRunner = new TestRunner(_applicationPath);
 
-            return testRunner.RunTestAndVerifyResponseHeading(
-                RuntimeFlavor.Clr,
-                RuntimeArchitecture.x64,
-                "http://localhost:5080",
-                "My/Resources",
-                "fr-FR",
-                "<h1>Bonjour</h1>");
+                await testRunner.RunTestAndVerifyResponseHeading(
+                    loggerFactory,
+                    RuntimeFlavor.Clr,
+                    RuntimeArchitecture.x64,
+                    "http://localhost:5080",
+                    "My/Resources",
+                    "fr-FR",
+                    "<h1>Bonjour</h1>");
+            }
         }
 
         [Fact]
-        public Task RunSite_AnyOS()
+        public async Task RunSite_AnyOSAsync()
         {
-            var testRunner = new TestRunner(_applicationPath);
+            using (StartLog(out var loggerFactory))
+            {
+                var testRunner = new TestRunner(_applicationPath);
 
-            return testRunner.RunTestAndVerifyResponseHeading(
-                RuntimeFlavor.CoreClr,
-                RuntimeArchitecture.x64,
-                "http://localhost:5081/",
-                "My/Resources",
-                "fr-FR",
-                "<h1>Bonjour</h1>");
+                await testRunner.RunTestAndVerifyResponseHeading(
+                    loggerFactory,
+                    RuntimeFlavor.CoreClr,
+                    RuntimeArchitecture.x64,
+                    "http://localhost:5081/",
+                    "My/Resources",
+                    "fr-FR",
+                    "<h1>Bonjour</h1>");
+            }
         }
     }
 }

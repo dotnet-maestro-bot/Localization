@@ -1,4 +1,4 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
+// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
@@ -42,14 +42,13 @@ namespace Microsoft.AspNetCore.Localization.FunctionalTests
         }
 
         private async Task<string> RunTestAndGetResponse(
+            ILoggerFactory loggerFactory,
             RuntimeFlavor runtimeFlavor,
             RuntimeArchitecture runtimeArchitecture,
             string applicationBaseUrl,
             string environmentName,
             string locale)
         {
-            var loggerFactory = new LoggerFactory();
-
             var deploymentParameters = new DeploymentParameters(_applicationPath, ServerType.Kestrel, runtimeFlavor, runtimeArchitecture)
             {
                 ApplicationBaseUriHint = applicationBaseUrl,
@@ -84,6 +83,7 @@ namespace Microsoft.AspNetCore.Localization.FunctionalTests
         }
 
         public async Task RunTestAndVerifyResponse(
+            ILoggerFactory loggerFactory,
             RuntimeFlavor runtimeFlavor,
             RuntimeArchitecture runtimeArchitecture,
             string applicationBaseUrl,
@@ -91,12 +91,13 @@ namespace Microsoft.AspNetCore.Localization.FunctionalTests
             string locale,
             string expectedText)
         {
-            var responseText = await RunTestAndGetResponse(runtimeFlavor, runtimeArchitecture, applicationBaseUrl, environmentName, locale);
+            var responseText = await RunTestAndGetResponse(loggerFactory, runtimeFlavor, runtimeArchitecture, applicationBaseUrl, environmentName, locale);
             Console.WriteLine("Response Text " + responseText);
             Assert.Equal(expectedText, responseText);
         }
 
         public async Task RunTestAndVerifyResponseHeading(
+            ILoggerFactory loggerFactory,
             RuntimeFlavor runtimeFlavor,
             RuntimeArchitecture runtimeArchitecture,
             string applicationBaseUrl,
@@ -104,7 +105,7 @@ namespace Microsoft.AspNetCore.Localization.FunctionalTests
             string locale,
             string expectedHeadingText)
         {
-            var responseText = await RunTestAndGetResponse(runtimeFlavor, runtimeArchitecture, applicationBaseUrl, environmentName, locale);
+            var responseText = await RunTestAndGetResponse(loggerFactory, runtimeFlavor, runtimeArchitecture, applicationBaseUrl, environmentName, locale);
             var headingIndex = responseText.IndexOf(expectedHeadingText);
             Console.WriteLine("Response Header " + responseText);
             Assert.True(headingIndex >= 0);

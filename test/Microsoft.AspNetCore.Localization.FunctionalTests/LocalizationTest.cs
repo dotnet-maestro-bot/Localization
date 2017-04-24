@@ -5,192 +5,246 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Server.IntegrationTesting;
 using Microsoft.AspNetCore.Testing.xunit;
+using Microsoft.Extensions.Logging.Testing;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Localization.FunctionalTests
 {
-    public class LocalizationTest
+    public class LocalizationTest : LoggedTest
     {
         private static readonly string _applicationPath = Path.Combine("test", "LocalizationWebsite");
 
-        [Fact]
-        public Task Localization_CustomCulture_AllOS()
+        public LocalizationTest(ITestOutputHelper output) : base(output)
         {
-            var testRunner = new TestRunner(_applicationPath);
+        }
 
-            return testRunner.RunTestAndVerifyResponse(
-                RuntimeFlavor.CoreClr,
-                RuntimeArchitecture.x64,
-                "http://localhost:5070",
-                "CustomCulturePreserved",
-                "en-US",
-                "kr10.00");
+        [Fact]
+        public async Task Localization_CustomCulture_AllOS()
+        {
+            using (StartLog(out var loggerFactory))
+            {
+                var testRunner = new TestRunner(_applicationPath);
+
+                await testRunner.RunTestAndVerifyResponse(
+                    loggerFactory,
+                    RuntimeFlavor.CoreClr,
+                    RuntimeArchitecture.x64,
+                    "http://localhost:5070",
+                    "CustomCulturePreserved",
+                    "en-US",
+                    "kr10.00");
+            }
         }
 
         [ConditionalFact]
         [OSSkipCondition(OperatingSystems.Linux)]
         [OSSkipCondition(OperatingSystems.MacOSX)]
-        public Task Localization_CustomCulture_Windows()
+        public async Task Localization_CustomCulture_Windows()
         {
-            var testRunner = new TestRunner(_applicationPath);
+            using (StartLog(out var loggerFactory))
+            {
+                var testRunner = new TestRunner(_applicationPath);
 
-            return testRunner.RunTestAndVerifyResponse(
-                RuntimeFlavor.Clr,
-                RuntimeArchitecture.x64,
-                "http://localhost:5071",
-                "CustomCulturePreserved",
-                "en-US",
-                "kr10.00");
+                await testRunner.RunTestAndVerifyResponse(
+                    loggerFactory,
+                    RuntimeFlavor.Clr,
+                    RuntimeArchitecture.x64,
+                    "http://localhost:5071",
+                    "CustomCulturePreserved",
+                    "en-US",
+                    "kr10.00");
+            }
         }
 
         [Fact]
-        public Task Localization_ResourcesInClassLibrary_ReturnLocalizedValue_AllOS()
+        public async Task Localization_ResourcesInClassLibrary_ReturnLocalizedValue_AllOS()
         {
-            var testRunner = new TestRunner(_applicationPath);
+            using (StartLog(out var loggerFactory))
+            {
+                var testRunner = new TestRunner(_applicationPath);
 
-            return testRunner.RunTestAndVerifyResponse(
-                RuntimeFlavor.CoreClr,
-                RuntimeArchitecture.x64,
-                "http://localhost:5072",
-                "ResourcesInClassLibrary",
-                "fr-FR",
-                "Bonjour from ResourcesClassLibraryNoAttribute Bonjour from ResourcesClassLibraryNoAttribute Bonjour from ResourcesClassLibraryWithAttribute Bonjour from ResourcesClassLibraryWithAttribute");
+                await testRunner.RunTestAndVerifyResponse(
+                    loggerFactory,
+                    RuntimeFlavor.CoreClr,
+                    RuntimeArchitecture.x64,
+                    "http://localhost:5072",
+                    "ResourcesInClassLibrary",
+                    "fr-FR",
+                    "Bonjour from ResourcesClassLibraryNoAttribute Bonjour from ResourcesClassLibraryNoAttribute Bonjour from ResourcesClassLibraryWithAttribute Bonjour from ResourcesClassLibraryWithAttribute");
+            }
         }
 
         [ConditionalFact]
         [OSSkipCondition(OperatingSystems.Linux)]
         [OSSkipCondition(OperatingSystems.MacOSX)]
-        public Task Localization_ResourcesInClassLibrary_ReturnLocalizedValue_Windows()
+        public async Task Localization_ResourcesInClassLibrary_ReturnLocalizedValue_Windows()
         {
-            var testRunner = new TestRunner(_applicationPath);
+            using (StartLog(out var loggerFactory))
+            {
+                var testRunner = new TestRunner(_applicationPath);
 
-            return testRunner.RunTestAndVerifyResponse(
-                RuntimeFlavor.Clr,
-                RuntimeArchitecture.x64,
-                "http://localhost:5073",
-                "ResourcesInClassLibrary",
-                "fr-FR",
-                "Bonjour from ResourcesClassLibraryNoAttribute Bonjour from ResourcesClassLibraryNoAttribute Bonjour from ResourcesClassLibraryWithAttribute Bonjour from ResourcesClassLibraryWithAttribute");
+                await testRunner.RunTestAndVerifyResponse(
+                    loggerFactory,
+                    RuntimeFlavor.Clr,
+                    RuntimeArchitecture.x64,
+                    "http://localhost:5073",
+                    "ResourcesInClassLibrary",
+                    "fr-FR",
+                    "Bonjour from ResourcesClassLibraryNoAttribute Bonjour from ResourcesClassLibraryNoAttribute Bonjour from ResourcesClassLibraryWithAttribute Bonjour from ResourcesClassLibraryWithAttribute");
+            }
         }
 
         [Fact]
-        public Task Localization_ResourcesInFolder_ReturnLocalizedValue_AllOS()
+        public async Task Localization_ResourcesInFolder_ReturnLocalizedValue_AllOS()
         {
-            var testRunner = new TestRunner(_applicationPath);
+            using (StartLog(out var loggerFactory))
+            {
+                var testRunner = new TestRunner(_applicationPath);
 
-            return testRunner.RunTestAndVerifyResponse(
-                RuntimeFlavor.CoreClr,
-                RuntimeArchitecture.x64,
-                "http://localhost:5074",
-                "ResourcesInFolder",
-                "fr-FR",
-                "Bonjour from StartupResourcesInFolder Bonjour from Test in resources folder Bonjour from Customer in resources folder Hello");
+                await testRunner.RunTestAndVerifyResponse(
+                    loggerFactory,
+                    RuntimeFlavor.CoreClr,
+                    RuntimeArchitecture.x64,
+                    "http://localhost:5074",
+                    "ResourcesInFolder",
+                    "fr-FR",
+                    "Bonjour from StartupResourcesInFolder Bonjour from Test in resources folder Bonjour from Customer in resources folder Hello");
+            }
         }
 
         [ConditionalFact]
         [OSSkipCondition(OperatingSystems.Linux)]
         [OSSkipCondition(OperatingSystems.MacOSX)]
-        public Task Localization_ResourcesInFolder_ReturnLocalizedValue_Windows()
+        public async Task Localization_ResourcesInFolder_ReturnLocalizedValue_Windows()
         {
-            var testRunner = new TestRunner(_applicationPath);
+            using (StartLog(out var loggerFactory))
+            {
+                var testRunner = new TestRunner(_applicationPath);
 
-            return testRunner.RunTestAndVerifyResponse(
-                RuntimeFlavor.Clr,
-                RuntimeArchitecture.x64,
-                "http://localhost:5075/",
-                "ResourcesInFolder",
-                "fr-FR",
-                "Bonjour from StartupResourcesInFolder Bonjour from Test in resources folder Bonjour from Customer in resources folder Hello");
+                await testRunner.RunTestAndVerifyResponse(
+                    loggerFactory,
+                    RuntimeFlavor.Clr,
+                    RuntimeArchitecture.x64,
+                    "http://localhost:5075/",
+                    "ResourcesInFolder",
+                    "fr-FR",
+                    "Bonjour from StartupResourcesInFolder Bonjour from Test in resources folder Bonjour from Customer in resources folder Hello");
+            }
         }
 
         [Fact]
-        public Task Localization_ResourcesInFolder_ReturnLocalizedValue_WithCultureFallback_AllOS()
+        public async Task Localization_ResourcesInFolder_ReturnLocalizedValue_WithCultureFallback_AllOS()
         {
-            var testRunner = new TestRunner(_applicationPath);
+            using (StartLog(out var loggerFactory))
+            {
+                var testRunner = new TestRunner(_applicationPath);
 
-            return testRunner.RunTestAndVerifyResponse(
-                RuntimeFlavor.CoreClr,
-                RuntimeArchitecture.x64,
-                "http://localhost:5076",
-                "ResourcesInFolder",
-                "fr-FR-test",
-                "Bonjour from StartupResourcesInFolder Bonjour from Test in resources folder Bonjour from Customer in resources folder Hello");
+                await testRunner.RunTestAndVerifyResponse(
+                    loggerFactory,
+                    RuntimeFlavor.CoreClr,
+                    RuntimeArchitecture.x64,
+                    "http://localhost:5076",
+                    "ResourcesInFolder",
+                    "fr-FR-test",
+                    "Bonjour from StartupResourcesInFolder Bonjour from Test in resources folder Bonjour from Customer in resources folder Hello");
+            }
         }
 
         [ConditionalFact]
         [OSSkipCondition(OperatingSystems.Linux)]
         [OSSkipCondition(OperatingSystems.MacOSX)]
-        public Task Localization_ResourcesInFolder_ReturnLocalizedValue_WithCultureFallback_Windows()
+        public async Task Localization_ResourcesInFolder_ReturnLocalizedValue_WithCultureFallback_Windows()
         {
-            var testRunner = new TestRunner(_applicationPath);
+            using (StartLog(out var loggerFactory))
+            {
+                var testRunner = new TestRunner(_applicationPath);
 
-            return testRunner.RunTestAndVerifyResponse(
-                RuntimeFlavor.Clr,
-                RuntimeArchitecture.x64,
-                "http://localhost:5077",
-                "ResourcesInFolder",
-                "fr-FR-test",
-                "Bonjour from StartupResourcesInFolder Bonjour from Test in resources folder Bonjour from Customer in resources folder Hello");
+                await testRunner.RunTestAndVerifyResponse(
+                    loggerFactory,
+                    RuntimeFlavor.Clr,
+                    RuntimeArchitecture.x64,
+                    "http://localhost:5077",
+                    "ResourcesInFolder",
+                    "fr-FR-test",
+                    "Bonjour from StartupResourcesInFolder Bonjour from Test in resources folder Bonjour from Customer in resources folder Hello");
+            }
         }
 
         [Fact]
-        public Task Localization_ResourcesInFolder_ReturnNonLocalizedValue_CultureHierarchyTooDeep_AllOS()
+        public async Task Localization_ResourcesInFolder_ReturnNonLocalizedValue_CultureHierarchyTooDeep_AllOS()
         {
-            var testRunner = new TestRunner(_applicationPath);
+            using (StartLog(out var loggerFactory))
+            {
+                var testRunner = new TestRunner(_applicationPath);
 
-            return testRunner.RunTestAndVerifyResponse(
-                RuntimeFlavor.CoreClr,
-                RuntimeArchitecture.x64,
-                "http://localhost:5078/",
-                "ResourcesInFolder",
-                "fr-FR-test-again-too-deep-to-work",
-                "Hello Hello Hello Hello");
+                await testRunner.RunTestAndVerifyResponse(
+                    loggerFactory,
+                    RuntimeFlavor.CoreClr,
+                    RuntimeArchitecture.x64,
+                    "http://localhost:5078/",
+                    "ResourcesInFolder",
+                    "fr-FR-test-again-too-deep-to-work",
+                    "Hello Hello Hello Hello");
+            }
         }
 
         [ConditionalFact]
         [OSSkipCondition(OperatingSystems.Linux)]
         [OSSkipCondition(OperatingSystems.MacOSX)]
-        public Task Localization_ResourcesInFolder_ReturnNonLocalizedValue_CultureHierarchyTooDeep_Windows()
+        public async Task Localization_ResourcesInFolder_ReturnNonLocalizedValue_CultureHierarchyTooDeep_Windows()
         {
-            var testRunner = new TestRunner(_applicationPath);
+            using (StartLog(out var loggerFactory))
+            {
+                var testRunner = new TestRunner(_applicationPath);
 
-            return testRunner.RunTestAndVerifyResponse(
-                RuntimeFlavor.Clr,
-                RuntimeArchitecture.x64,
-                "http://localhost:5079/",
-                "ResourcesInFolder",
-                "fr-FR-test-again-too-deep-to-work",
-                "Hello Hello Hello Hello");
+                await testRunner.RunTestAndVerifyResponse(
+                    loggerFactory,
+                    RuntimeFlavor.Clr,
+                    RuntimeArchitecture.x64,
+                    "http://localhost:5079/",
+                    "ResourcesInFolder",
+                    "fr-FR-test-again-too-deep-to-work",
+                    "Hello Hello Hello Hello");
+            }
         }
 
         [Fact]
-        public Task Localization_ResourcesAtRootFolder_ReturnLocalizedValue_AllOS()
+        public async Task Localization_ResourcesAtRootFolder_ReturnLocalizedValue_AllOS()
         {
-            var testRunner = new TestRunner(_applicationPath);
+            using (StartLog(out var loggerFactory))
+            {
+                var testRunner = new TestRunner(_applicationPath);
 
-            return testRunner.RunTestAndVerifyResponse(
-                RuntimeFlavor.CoreClr,
-                RuntimeArchitecture.x64,
-                "http://localhost:5070",
-                "ResourcesAtRootFolder",
-                "fr-FR",
-                "Bonjour from StartupResourcesAtRootFolder Bonjour from Test in root folder Bonjour from Customer in Models folder");
+                await testRunner.RunTestAndVerifyResponse(
+                    loggerFactory,
+                    RuntimeFlavor.CoreClr,
+                    RuntimeArchitecture.x64,
+                    "http://localhost:5070",
+                    "ResourcesAtRootFolder",
+                    "fr-FR",
+                    "Bonjour from StartupResourcesAtRootFolder Bonjour from Test in root folder Bonjour from Customer in Models folder");
+            }
         }
 
         [ConditionalFact]
         [OSSkipCondition(OperatingSystems.Linux)]
         [OSSkipCondition(OperatingSystems.MacOSX)]
-        public Task Localization_ResourcesAtRootFolder_ReturnLocalizedValue_Windows()
+        public async Task Localization_ResourcesAtRootFolder_ReturnLocalizedValue_Windows()
         {
-            var testRunner = new TestRunner(_applicationPath);
+            using (StartLog(out var loggerFactory))
+            {
+                var testRunner = new TestRunner(_applicationPath);
 
-            return testRunner.RunTestAndVerifyResponse(
-                RuntimeFlavor.Clr,
-                RuntimeArchitecture.x64,
-                "http://localhost:5071",
-                "ResourcesAtRootFolder",
-                "fr-FR",
-                "Bonjour from StartupResourcesAtRootFolder Bonjour from Test in root folder Bonjour from Customer in Models folder");
+                await testRunner.RunTestAndVerifyResponse(
+                    loggerFactory,
+                    RuntimeFlavor.Clr,
+                    RuntimeArchitecture.x64,
+                    "http://localhost:5071",
+                    "ResourcesAtRootFolder",
+                    "fr-FR",
+                    "Bonjour from StartupResourcesAtRootFolder Bonjour from Test in root folder Bonjour from Customer in Models folder");
+            }
         }
     }
 }
