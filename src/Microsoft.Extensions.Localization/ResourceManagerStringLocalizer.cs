@@ -191,7 +191,6 @@ namespace Microsoft.Extensions.Localization
                 var value = GetStringSafely(name, culture);
                 yield return new LocalizedString(name, value ?? name, resourceNotFound: value == null, searchedLocation: _resourceBaseName);
             }
-        }
 
         /// <summary>
         /// Gets a resource string from the <see cref="_resourceManager"/> and returns <c>null</c> instead of
