@@ -10,6 +10,12 @@ Microsoft.Extensions.Localization.IStringLocalizer&lt;T&gt;</Description>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageTags>localization</PackageTags>
+    <DebugType>Portable</DebugType>
+    <SourceLinkCreate>true</SourceLinkCreate>
   </PropertyGroup>
 
+
+  <ItemGroup>
+    <PackageReference Include="SourceLink.Create.CommandLine" Version="2.1.2" PrivateAssets="All" NoWarn="KRB4002" /> 
+  </ItemGroup>
 </Project>

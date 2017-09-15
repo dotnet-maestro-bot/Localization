@@ -7,10 +7,13 @@
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageTags>aspnetcore;localization</PackageTags>
+    <DebugType>Portable</DebugType>
+    <SourceLinkCreate>true</SourceLinkCreate>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.Extensions.Localization.Abstractions\Microsoft.Extensions.Localization.Abstractions.csproj" />
+    <PackageReference Include="SourceLink.Create.CommandLine" Version="2.1.2" PrivateAssets="All" NoWarn="KRB4002" /> 
   </ItemGroup>
 
   <ItemGroup>
