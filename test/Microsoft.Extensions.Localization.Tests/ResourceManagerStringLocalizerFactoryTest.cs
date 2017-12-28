@@ -112,6 +112,32 @@ namespace Microsoft.Extensions.Localization.Tests
         }
 
         [Fact]
+        public void Create_ResourceLocationAttribute_UsesRootNamespace()
+        {
+            // Arrange
+            var locOptions = new LocalizationOptions();
+            var options = new Mock<IOptions<LocalizationOptions>>();
+            options.Setup(o => o.Value).Returns(locOptions);
+            var loggerFactory = NullLoggerFactory.Instance;
+
+            var resourcePath = Path.Combine("My", "Resources");
+            var rootNamespace = "MyNamespace";
+            var resourceLocationAttribute = new ResourceLocationAttribute(resourcePath, rootNamespace);
+
+            var typeFactory = new TestResourceManagerStringLocalizerFactory(
+                options.Object,
+                resourceLocationAttribute,
+                loggerFactory);
+
+            var type = typeof(ResourceManagerStringLocalizerFactoryTest);
+            // Act
+            typeFactory.Create(type);
+
+            // Assert
+            Assert.Equal($"MyNamespace.My.Resources.ResourceManagerStringLocalizerFactoryTest", typeFactory.BaseName);
+        }
+
+        [Fact]
         public void Create_FromType_ResourcesPathDirectorySeperatorToDot()
         {
             // Arrange
